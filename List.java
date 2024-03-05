@@ -1,3 +1,5 @@
+import javax.swing.text.html.HTMLDocument.Iterator;
+
 /** A linked list of character data objects.
  *  (Actually, a list of Node objects, each holding a reference to a character data object.
  *  However, users of this class are not aware of the Node objects. As far as they are concerned,
@@ -30,11 +32,27 @@ public class List {
     /** GIVE Adds a CharData object with the given character to the beginning of this list. */
     public void addFirst(char chr) {
         // Your code goes here
+        CharData newChar = new CharData(chr); 
+        Node newNode = new Node(newChar);
+        newNode.next = first; // new node ! first node
+        first = newNode; 
+        size ++; 
+
     }
     
     /** GIVE Textual representation of this list. */
     public String toString() {
         // Your code goes here
+
+        ListIterator ls = new ListIterator(first); 
+        CharData charData; 
+        String pnt = ""; 
+
+        while (ls.hasNext()) {
+            charData = ls.next();
+            pnt = pnt + charData.toString(); 
+        }
+        return pnt; 
     }
 
     /** Returns the index of the first CharData object in this list
@@ -42,6 +60,17 @@ public class List {
      *  or -1 if there is no such object in this list. */
     public int indexOf(char chr) {
         // Your code goes here
+        int i=0; 
+        ListIterator newIterator = new ListIterator(first); 
+        while (newIterator.hasNext()){
+            CharData newChar = newIterator.next();
+            i++; 
+            if (newChar.equals(chr)){
+                return i; 
+            }
+
+        }
+        return -1; 
     }
 
     /** If the given character exists in one of the CharData objects in this list,
@@ -49,6 +78,17 @@ public class List {
      *  given chr to the beginning of this list. */
     public void update(char chr) {
         // Your code goes here
+        if (indexOf(chr) == -1){
+            addFirst(chr);
+        }
+        else{
+            Node current = first; 
+            int index = indexOf(chr);
+            for (int i=0; i<index; i++){
+                current = current.next; 
+            }
+            current.cp.count++;  
+        }
     }
 
     /** GIVE If the given character exists in one of the CharData objects
@@ -56,6 +96,21 @@ public class List {
      *  true. Otherwise, returns false. */
     public boolean remove(char chr) {
         // Your code goes here
+        if (indexOf(chr) == -1){
+            return false; 
+        }
+        else {
+            int index = indexOf(chr); 
+            Node prev = null;
+            Node current = first;
+            for (int i =0; i<index; i++){
+                prev = prev.next; 
+                current = current.next; 
+            }
+            prev.next = current.next; 
+            size --;
+            return true; 
+        }
     }
 
     /** Returns the CharData object at the specified index in this list. 
@@ -63,6 +118,15 @@ public class List {
      *  throws an IndexOutOfBoundsException. */
     public CharData get(int index) {
         // Your code goes here
+        if (index < 0 || index >size){
+            return null;  
+        }
+        Node newNode = first; 
+        for (int i=0; i<index; i++){
+            newNode = newNode.next; 
+        }
+        CharData newData = newNode.cp; 
+        return newData; 
     }
 
     /** Returns an array of CharData objects, containing all the CharData objects in this list. */
