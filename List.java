@@ -1,5 +1,3 @@
-import javax.swing.text.html.HTMLDocument.Iterator;
-
 /** A linked list of character data objects.
  *  (Actually, a list of Node objects, each holding a reference to a character data object.
  *  However, users of this class are not aware of the Node objects. As far as they are concerned,
@@ -31,103 +29,106 @@ public class List {
 
     /** GIVE Adds a CharData object with the given character to the beginning of this list. */
     public void addFirst(char chr) {
-        // Your code goes here
-        CharData newChar = new CharData(chr); 
-        Node newNode = new Node(newChar);
-        newNode.next = first; // new node ! first node
-        first = newNode; 
-        size ++; 
-
+        CharData charNew = new CharData(chr);
+        Node newNode = new Node(charNew);
+        if(this.size==0)
+        {
+            this.first = newNode;
+        }
+        else{
+            newNode.next=first;
+            first=newNode;
+        }
+        size++;
     }
     
     /** GIVE Textual representation of this list. */
     public String toString() {
-        // Your code goes here
-
-        ListIterator ls = new ListIterator(first); 
-        CharData charData; 
-        String pnt = ""; 
-
-        while (ls.hasNext()) {
-            charData = ls.next();
-            pnt = pnt + charData.toString(); 
+        if(this.size==0)
+        {
+            return "()";
         }
-        return pnt; 
+        String str = "(";
+        Node current = first;
+        while (current!=null)
+        {
+            str += current.toString() + " ";
+            current = current.next;
+        }
+        return str.substring(0,str.length()-1) + ")";
     }
 
     /** Returns the index of the first CharData object in this list
      *  that has the same chr value as the given char,
      *  or -1 if there is no such object in this list. */
     public int indexOf(char chr) {
-        // Your code goes here
-        int i=0; 
-        ListIterator newIterator = new ListIterator(first); 
-        while (newIterator.hasNext()){
-            CharData newChar = newIterator.next();
-            i++; 
-            if (newChar.equals(chr)){
-                return i; 
-            }
-
+        Node current = first;
+        int index = 0;
+    while(current != null) {
+        if(current.cp.chr == chr) {
+            return index;
         }
-        return -1; 
+        current = current.next;
+        index++;
+    }
+    return -1;
     }
 
     /** If the given character exists in one of the CharData objects in this list,
      *  increments its counter. Otherwise, adds a new CharData object with the
      *  given chr to the beginning of this list. */
     public void update(char chr) {
-        // Your code goes here
-        if (indexOf(chr) == -1){
-            addFirst(chr);
-        }
-        else{
-            Node current = first; 
-            int index = indexOf(chr);
-            for (int i=0; i<index; i++){
-                current = current.next; 
+        Node current = first;
+        while(current != null) {
+            if(current.cp.chr == chr) {
+                current.cp.count++;
+                return;
             }
-            current.cp.count++;  
+            current = current.next;
         }
+        addFirst(chr);
     }
 
     /** GIVE If the given character exists in one of the CharData objects
      *  in this list, removes this CharData object from the list and returns
      *  true. Otherwise, returns false. */
     public boolean remove(char chr) {
-        // Your code goes here
-        if (indexOf(chr) == -1){
-            return false; 
+        Node pre = null;
+        Node current = first;
+        while(current!=null && current.cp.chr !=chr)
+        {
+            pre = current;
+            current=current.next;
+        }
+        if(current==null)
+        {
+            return false;
+        }
+        if(pre == null)
+        {
+            first = first.next;
         }
         else {
-            int index = indexOf(chr); 
-            Node prev = null;
-            Node current = first;
-            for (int i =0; i<index; i++){
-                prev = prev.next; 
-                current = current.next; 
-            }
-            prev.next = current.next; 
-            size --;
-            return true; 
+            pre.next = current.next;
         }
+        size --;
+        return true;
     }
 
     /** Returns the CharData object at the specified index in this list. 
      *  If the index is negative or is greater than the size of this list, 
      *  throws an IndexOutOfBoundsException. */
     public CharData get(int index) {
-        // Your code goes here
-        if (index < 0 || index >size){
-            return null;  
+            if (index < 0 || index >= this.size) {
+                throw new IndexOutOfBoundsException("Index out of bounds");
+            }
+            Node current = first;
+            for(int i = 0; i < index; i++) {
+                current = current.next;
+            }
+            return current.cp;
         }
-        Node newNode = first; 
-        for (int i=0; i<index; i++){
-            newNode = newNode.next; 
-        }
-        CharData newData = newNode.cp; 
-        return newData; 
-    }
+    
 
     /** Returns an array of CharData objects, containing all the CharData objects in this list. */
     public CharData[] toArray() {
